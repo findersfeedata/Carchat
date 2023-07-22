@@ -1,19 +1,17 @@
 document.addEventListener("DOMContentLoaded", function () {
   const video = document.getElementById("hero-video");
   const overlay = document.getElementById("hero-video-overlay");
-  const clickableTime = 7; // Set the time in seconds after which the video becomes clickable
+  const clickableTime = 5; // Set the time in seconds after which the video becomes clickable
   const videoStartDelay = 2; // Set the delay in seconds before the video starts playing
   let videoPlayedForClickableTime = false;
   let tapTriggered = false;
-
-  // Mute the video by default
-  video.muted = true;
 
   // Function to start playing the video
   function playVideo() {
     video.play();
   }
 
+  // Start playing the video automatically after the specified delay
   setTimeout(function () {
     // Check if the video has been triggered to play by the user tap
     if (!tapTriggered) {
@@ -21,11 +19,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }, videoStartDelay * 1000); // Convert seconds to milliseconds
 
-  // Unmute the video if the user clicks during the delay or within the first second of the video starting to play
+  // Event listener to detect user tap
   document.addEventListener("click", function () {
+    // Check if the video has not been played yet and the tap occurs during the delay
     if (!videoPlayedForClickableTime && !tapTriggered) {
       tapTriggered = true;
-      video.muted = false;
       playVideo();
     }
   });
@@ -46,10 +44,16 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   };
 
+  // Add click event to the overlay to redirect to the link
   overlay.addEventListener("click", function () {
     if (video.currentTime >= clickableTime) {
       const linkElement = document.getElementById("hero-video-link");
       window.open(linkElement.href, "_blank"); // Open link in a new tab
     }
+  });
+
+  // Disable right-click on the entire document
+  document.addEventListener("contextmenu", function (event) {
+    event.preventDefault();
   });
 });
