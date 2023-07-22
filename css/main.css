@@ -26,9 +26,9 @@ html {
   position: absolute;
   z-index: 1;
   pointer-events: none;
-  cursor: default;
+  cursor: default; /* Set the default cursor style */
 }
 
 #hero-video-overlay.clickable {
-  cursor: pointer;
+  cursor: pointer; /* Change cursor to pointer when clickable class is added */
 }
