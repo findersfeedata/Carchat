@@ -6,12 +6,6 @@ html {
   overflow: hidden;
 }
 
-body {
-  background-image: url("../images/Join Car Chat Animation 01.webp");
-  background-size: cover;
-  background-position: center;
-}
-
 .hero-video-container {
   position: relative;
   height: 100vh;
