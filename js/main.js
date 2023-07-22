@@ -44,6 +44,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   };
 
+  // Add click event to the overlay to redirect to the link
+  overlay.addEventListener("click", function () {
+    if (video.currentTime >= clickableTime) {
+      const linkElement = document.getElementById("hero-video-link");
+      window.open(linkElement.href, "_blank"); // Open link in a new tab
+    }
+  });
+
   // Disable right-click on the entire document
   document.addEventListener("contextmenu", function (event) {
     event.preventDefault();
