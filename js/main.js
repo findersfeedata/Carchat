@@ -1,59 +1,59 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const video = document.getElementById("hero-video");
-  const overlay = document.getElementById("hero-video-overlay");
-  const clickableTime = 5; // Set the time in seconds after which the video becomes clickable
-  const videoStartDelay = 2; // Set the delay in seconds before the video starts playing
-  let videoPlayedForClickableTime = false;
-  let tapTriggered = false;
+  const heroImage = document.getElementById("hero-image");
+  const heroVideo = document.getElementById("hero-video");
 
-  // Function to start playing the video
-  function playVideo() {
-    video.play();
+  const animationDelay = 3000; // Garage Door Animation Time
+  const videoPlayDelay = 6000; // Video Link Time
+  const linkURL = "https://t.me/JoinCarChatBot";
+  const mobileImageSrc = "images/Join Car Chat 06 - Garage Door Only - Mobile.webp";
+
+  let hasImageAnimated = false;
+  let automaticAnimationTimer;
+  let canOpenLink = false;
+
+  // Function to animate the image upwards and reveal the video
+  function animateImage() {
+    if (!hasImageAnimated) {
+      heroImage.style.transform = "translateY(-100%)";
+      heroImage.style.transition = `transform ${animationDelay / 1000}s ease`; //Update the transition duration on the hero image to match the animation delay
+      heroImage.style.pointerEvents = "none"; // Disable pointer events on the image immediately
+      setTimeout(() => {
+        heroVideo.play();
+        heroVideo.addEventListener("timeupdate", handleVideoTimeUpdate);
+      }, animationDelay);
+      hasImageAnimated = true;
+    }
   }
 
-  // Start playing the video automatically after the specified delay
-  setTimeout(function () {
-    // Check if the video has been triggered to play by the user tap
-    if (!tapTriggered) {
-      playVideo();
-    }
-  }, videoStartDelay * 1000); // Convert seconds to milliseconds
-
-  // Event listener to detect user tap
-  document.addEventListener("click", function () {
-    // Check if the video has not been played yet and the tap occurs during the delay
-    if (!videoPlayedForClickableTime && !tapTriggered) {
-      tapTriggered = true;
-      playVideo();
-    }
+  // Add a click event listener to the image
+  heroImage.addEventListener("click", () => {
+    clearTimeout(automaticAnimationTimer); // Clear the automatic animation timer if the user clicks
+    animateImage();
   });
 
-  video.onended = function () {
-    // Show the video overlay once the video has ended
-    overlay.style.pointerEvents = "auto";
-    overlay.classList.add("clickable"); // Add clickable class to change cursor style
-  };
+  // Automatically trigger the image animation after the specified delay
+  automaticAnimationTimer = setTimeout(animateImage, videoPlayDelay);
 
-  video.ontimeupdate = function () {
-    // Check if the video has been playing for the specified time
-    if (video.currentTime >= clickableTime && !videoPlayedForClickableTime) {
-      videoPlayedForClickableTime = true;
-      // Allow the video overlay to be clickable after the specified time
-      overlay.style.pointerEvents = "auto";
-      overlay.classList.add("clickable"); // Add clickable class to change cursor style
+  // Function to handle the video time update
+  function handleVideoTimeUpdate() {
+    if (heroVideo.currentTime >= videoPlayDelay / 1000 && !canOpenLink) {
+      canOpenLink = true; // Allow opening the link after the specified delay
+      document.body.classList.add("pointer-cursor"); // Add the pointer-cursor class to the body
     }
-  };
+  }
 
-  // Add click event to the overlay to redirect to the link
-  overlay.addEventListener("click", function () {
-    if (video.currentTime >= clickableTime) {
-      const linkElement = document.getElementById("hero-video-link");
-      window.open(linkElement.href, "_blank"); // Open link in a new tab
+  // Update the transition duration on the hero image to match the animation delay
+  heroImage.style.transition = `transform ${animationDelay / 1000}s ease`;
+
+  // Check for touch devices and update the image source
+  if ('ontouchstart' in window || navigator.maxTouchPoints) {
+    heroImage.src = mobileImageSrc;
+  }
+
+  // Open the link when the user clicks anywhere on the site after the specified delay
+  document.addEventListener("click", () => {
+    if (canOpenLink) {
+      window.open(linkURL, "_blank");
     }
-  });
-
-  // Disable right-click on the entire document
-  document.addEventListener("contextmenu", function (event) {
-    event.preventDefault();
   });
 });
