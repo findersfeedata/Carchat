@@ -1,11 +1,13 @@
 document.addEventListener("DOMContentLoaded", function () {
   const heroImage = document.getElementById("hero-image");
   const heroVideo = document.getElementById("hero-video");
+  const garageDoorAudio = document.getElementById("garage-door-audio");
+  const videoAudio = document.getElementById("video-audio");
 
-  const animationDelay = 3000; // Garage Door Animation Time
-  const videoPlayDelay = 6000; // Video Link Time
+  const animationDelay = 3000; // 3 seconds
+  const videoPlayDelay = 5000; // 5 seconds
   const linkURL = "https://t.me/JoinCarChatBot";
-  const mobileImageSrc = "images/Join Car Chat 06 - Garage Door Only - Mobile.webp";
+  const mobileImageSrc = "images/Join Car Chat 06 - Garage Door Only - Mobile.webp"; // Update this with the mobile image URL
 
   let hasImageAnimated = false;
   let automaticAnimationTimer;
@@ -15,11 +17,13 @@ document.addEventListener("DOMContentLoaded", function () {
   function animateImage() {
     if (!hasImageAnimated) {
       heroImage.style.transform = "translateY(-100%)";
-      heroImage.style.transition = `transform ${animationDelay / 1000}s ease`; //Update the transition duration on the hero image to match the animation delay
+      heroImage.style.transition = `transform ${animationDelay / 1000}s ease`;
       heroImage.style.pointerEvents = "none"; // Disable pointer events on the image immediately
+      garageDoorAudio.play(); // Play the garage door open sound
       setTimeout(() => {
         heroVideo.play();
         heroVideo.addEventListener("timeupdate", handleVideoTimeUpdate);
+        videoAudio.play(); // Play the video audio sound
       }, animationDelay);
       hasImageAnimated = true;
     }
@@ -48,6 +52,14 @@ document.addEventListener("DOMContentLoaded", function () {
   // Check for touch devices and update the image source
   if ('ontouchstart' in window || navigator.maxTouchPoints) {
     heroImage.src = mobileImageSrc;
+
+    // Add a touchstart event listener to the document to detect the first user interaction on mobile
+    document.addEventListener("touchstart", () => {
+      if (!hasImageAnimated) {
+        // If the image hasn't animated yet, trigger the image animation and audio playback
+        animateImage();
+      }
+    }, { once: true }); // The { once: true } option ensures that the event listener is removed after the first touchstart.
   }
 
   // Open the link when the user clicks anywhere on the site after the specified delay
