@@ -4,10 +4,13 @@ document.addEventListener("DOMContentLoaded", function () {
   const garageDoorAudio = document.getElementById("garage-door-audio");
   const videoAudio = document.getElementById("video-audio");
 
-  const animationDelay = 3000; // 3 seconds
-  const videoPlayDelay = 5000; // 5 seconds
+  const doorTransitionTime = 3000; // Time for the garage door transition
+  const videoClickableDelay = 5000; // Time before the video becomes a clickable link
+  const autoPlayDelay = 5000; // Time before the garage door starts animating by itself if the user doesn't click anywhere
+  const videoStartDelay = 1500; // Time before the video starts playing after the garage door transition starts
   const linkURL = "https://t.me/JoinCarChatBot";
-  const mobileImageSrc = "images/Join Car Chat 06 - Garage Door Only - Mobile.webp"; // Update this with the mobile image URL
+  const mobileImageSrc =
+    "images/Join Car Chat 06 - Garage Door Only - Mobile.webp";
 
   let hasImageAnimated = false;
   let automaticAnimationTimer;
@@ -17,14 +20,16 @@ document.addEventListener("DOMContentLoaded", function () {
   function animateImage() {
     if (!hasImageAnimated) {
       heroImage.style.transform = "translateY(-100%)";
-      heroImage.style.transition = `transform ${animationDelay / 1000}s ease`;
+      heroImage.style.transition = `transform ${
+        doorTransitionTime / 1000
+      }s ease`;
       heroImage.style.pointerEvents = "none"; // Disable pointer events on the image immediately
       garageDoorAudio.play(); // Play the garage door open sound
       setTimeout(() => {
         heroVideo.play();
         heroVideo.addEventListener("timeupdate", handleVideoTimeUpdate);
         videoAudio.play(); // Play the video audio sound
-      }, animationDelay);
+      }, videoStartDelay);
       hasImageAnimated = true;
     }
   }
@@ -36,30 +41,22 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // Automatically trigger the image animation after the specified delay
-  automaticAnimationTimer = setTimeout(animateImage, videoPlayDelay);
+  automaticAnimationTimer = setTimeout(animateImage, autoPlayDelay);
 
   // Function to handle the video time update
   function handleVideoTimeUpdate() {
-    if (heroVideo.currentTime >= videoPlayDelay / 1000 && !canOpenLink) {
+    if (heroVideo.currentTime >= videoClickableDelay / 1000 && !canOpenLink) {
       canOpenLink = true; // Allow opening the link after the specified delay
       document.body.classList.add("pointer-cursor"); // Add the pointer-cursor class to the body
     }
   }
 
   // Update the transition duration on the hero image to match the animation delay
-  heroImage.style.transition = `transform ${animationDelay / 1000}s ease`;
+  heroImage.style.transition = `transform ${doorTransitionTime / 1000}s ease`;
 
-  // Check for touch devices and update the image source
-  if ('ontouchstart' in window || navigator.maxTouchPoints) {
+  // Check for touch devices and update the image source to say Tap to Enter instead of Click to Enter
+  if ("ontouchstart" in window || navigator.maxTouchPoints) {
     heroImage.src = mobileImageSrc;
-
-    // Add a touchstart event listener to the document to detect the first user interaction on mobile
-    document.addEventListener("touchstart", () => {
-      if (!hasImageAnimated) {
-        // If the image hasn't animated yet, trigger the image animation and audio playback
-        animateImage();
-      }
-    }, { once: true }); // The { once: true } option ensures that the event listener is removed after the first touchstart.
   }
 
   // Open the link when the user clicks anywhere on the site after the specified delay
